@@ -55,8 +55,19 @@ const fetchMatches = async (tournamentId) => {
         player2: 0
       },
       state: match.state,
-      scores: match.scores_csv
-    }))
+      scores: match.scores_csv,
+      identifier: match.identifier
+    })).sort((a, b) => {
+      if (a.state === 'complete' && b.state !== 'complete') return 1;
+      if (a.state !== 'complete' && b.state === 'complete') return -1;
+      if (a.state === b.state) {
+        if (a.identifier.length !== b.identifier.length) {
+          return a.identifier.length - b.identifier.length;
+        }
+        return a.identifier.localeCompare(b.identifier);
+      }
+      return 0;
+    });
 
     loading.value = false
   } catch (err) {
