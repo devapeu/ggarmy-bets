@@ -56,7 +56,8 @@ const fetchMatches = async (tournamentId) => {
       },
       state: match.state,
       scores: match.scores_csv,
-      identifier: match.identifier
+      identifier: match.identifier,
+      round: match.round,
     })).sort((a, b) => {
       if (a.state === 'complete' && b.state !== 'complete') return 1;
       if (a.state !== 'complete' && b.state === 'complete') return -1;
@@ -116,6 +117,7 @@ onMounted(() => {
     
     <div v-else class="matches-grid">
       <div v-for="match in matches" :key="match.id" class="match-card">
+        Round {{ match.round }}
         <div 
           class="match-card__result"
           :class="{ 'match-card__result--complete': match.state === 'complete' }">

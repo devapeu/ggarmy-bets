@@ -18,51 +18,37 @@ if (!$tournamentId) {
     exit;
 }
 
+function getCurl($url, $apiKey) {
+  $ch = curl_init();
+
+  curl_setopt_array($ch, [
+    CURLOPT_URL => $url . "?api_key=" . $apiKey,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_HTTPHEADER => ['Content-Type: application/json']
+  ]);
+
+  $response = curl_exec($ch);
+  $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+  if ($httpCode !== 200) {
+      http_response_code($httpCode);
+      echo json_encode(['error' => 'Failed to fetch data']);
+      exit;
+  }
+
+  curl_close($ch);
+  echo $response;
+}
+
 # API endpoints
 if ($uri === '/matches') {
     $apiURL = "https://api.challonge.com/v1/tournaments/{$tournamentId}/matches.json";
-    $ch = curl_init();
-
-    curl_setopt_array($ch, [
-        CURLOPT_URL => $apiURL . "?api_key=" . $challongeApiKey,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HTTPHEADER => ['Content-Type: application/json']
-    ]);
-
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-    if ($httpCode !== 200) {
-        http_response_code($httpCode);
-        echo json_encode(['error' => 'Failed to fetch matches']);
-        exit;
-    }
-
-    curl_close($ch);
-    echo $response;
+    getCurl($apiURL, $challongeApiKey);
 }
 
 else if ($uri === '/participants') {
     $apiURL = "https://api.challonge.com/v1/tournaments/{$tournamentId}/participants.json";
-    $ch = curl_init();
-
-    curl_setopt_array($ch, [
-        CURLOPT_URL => $apiURL . "?api_key=" . $challongeApiKey,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HTTPHEADER => ['Content-Type: application/json']
-    ]);
-
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-    if ($httpCode !== 200) {
-        http_response_code($httpCode);
-        echo json_encode(['error' => 'Failed to fetch participants']);
-        exit;
-    }
-
-    curl_close($ch);
-    echo $response;
+    getCurl($apiURL, $challongeApiKey);
 }
 
 else {
