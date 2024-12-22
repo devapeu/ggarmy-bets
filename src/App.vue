@@ -8,13 +8,13 @@ const error = ref(null)
 // Challonge API configuration - Move these to .env
 const CHALLONGE_API_KEY = import.meta.env.VITE_CHALLONGE_API_KEY
 const CHALLONGE_USERNAME = import.meta.env.VITE_CHALLONGE_USERNAME
-const BASE_URL = `https://api.challonge.com/v1`
+const BASE_URL = `http://localhost:8000`
 
 // Fetch matches from Challonge API
 const fetchMatches = async (tournamentId) => {
   try {
     const tournamentsResponse = await fetch(
-      `${BASE_URL}/tournaments/${tournamentId}/matches.json?api_key=${CHALLONGE_API_KEY}`, {
+      `${BASE_URL}/?tournamentId=${tournamentId}`, {
       headers: {
         'Content-Type': 'application/json', 
         'Origin': 'http://localhost:5173'
@@ -22,8 +22,21 @@ const fetchMatches = async (tournamentId) => {
     })
 
     if (!tournamentsResponse.ok) {
-      throw new Error('Failed to fetch tournaments')
+      throw new Error('Failed to fetch matches')
     }
+
+    const matchesData = await tournamentsResponse.json()
+    console.log(matchesData)
+    
+    // Transform the API response into our matches format
+    matches.value = matchesData.map(({ match }) => ({
+      id: match.id,
+      player1_id: match.player1_id,
+      player2_id: match.player2_id,
+      state: match.state,
+      scores: match.scores_csv
+    }))
+
     loading.value = false
   } catch (err) {
     console.error('Error fetching matches:', err)
@@ -65,14 +78,11 @@ onMounted(() => {
     <div v-else class="matches-grid">
       <div v-for="match in matches" :key="match.id" class="match-card">
         <div class="match-header">
-          <h3>{{ match.playerA }} vs {{ match.playerB }}</h3>
-          <span class="match-date">{{ new Date(match.date).toLocaleDateString() }}</span>
+          <h3>{{ match.player1_id }} vs {{ match.player2_id }}</h3>
           <span class="match-state">{{ match.state }}</span>
         </div>
         
         <div class="match-info">
-          <p>Round: {{ match.round }}</p>
-          <p>Tournament: {{ match.tournamentName }}</p>
           <p v-if="match.scores">Score: {{ match.scores }}</p>
         </div>
         

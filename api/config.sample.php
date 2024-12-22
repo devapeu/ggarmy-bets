@@ -1,0 +1,4 @@
+<?php
+$CHALLONGE_API_KEY = '';
+$CHALLONGE_USERNAME = '';
+?>
