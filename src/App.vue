@@ -7,8 +7,6 @@ const loading = ref(true)
 const error = ref(null)
 
 // Challonge API configuration - Move these to .env
-const CHALLONGE_API_KEY = import.meta.env.VITE_CHALLONGE_API_KEY
-const CHALLONGE_USERNAME = import.meta.env.VITE_CHALLONGE_USERNAME
 const BASE_URL = `http://localhost:8000`
 
 // Fetch matches from Challonge API
@@ -51,6 +49,11 @@ const fetchMatches = async (tournamentId) => {
       id: match.id,
       player1: participants.value.find(p => p.id === match.player1_id),
       player2: participants.value.find(p => p.id === match.player2_id),
+      odds: {
+        tie: 0,
+        player1: 0,
+        player2: 0
+      },
       state: match.state,
       scores: match.scores_csv
     }))
@@ -111,9 +114,18 @@ onMounted(() => {
               class="vote-button"
               :disabled="match.state !== 'open'"
             >
-              Vote {{ match.playerA }}
+              {{ match.player1.name }} {{ match.odds.player1 }}
             </button>
-            <span>{{ match.votesPlayerA }} votes</span>
+          </div>
+
+          <div class="tie-votes">
+            <button 
+              @click="handleVote(match.id, 'tie')"
+              class="vote-button"
+              :disabled="match.state !== 'open'"
+            >
+              Tie {{ match.odds.tie }}
+            </button>
           </div>
           
           <div class="player-votes">
@@ -122,9 +134,8 @@ onMounted(() => {
               class="vote-button"
               :disabled="match.state !== 'open'"
             >
-              Vote {{ match.playerB }}
+              {{ match.player2.name }} {{ match.odds.player2 }}
             </button>
-            <span>{{ match.votesPlayerB }} votes</span>
           </div>
         </div>
       </div>
