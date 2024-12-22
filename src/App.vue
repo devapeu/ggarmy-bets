@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 
 const matches = ref([])
+const participants = ref([])
 const loading = ref(true)
 const error = ref(null)
 
@@ -13,33 +14,50 @@ const BASE_URL = `http://localhost:8000`
 // Fetch matches from Challonge API
 const fetchMatches = async (tournamentId) => {
   try {
-    const tournamentsResponse = await fetch(
-      `${BASE_URL}/?tournamentId=${tournamentId}`, {
+    // Fetch participants
+    const participantsResponse = await fetch(
+      `${BASE_URL}/participants?tournamentId=${tournamentId}`, {
       headers: {
         'Content-Type': 'application/json', 
         'Origin': 'http://localhost:5173'
       }
     })
 
-    if (!tournamentsResponse.ok) {
+    if (!participantsResponse.ok) {
+      throw new Error('Failed to fetch participants')
+    }
+
+    const participantsData = await participantsResponse.json()
+    participants.value = participantsData.map(({ participant }) => ({
+      id: participant.group_player_ids[0],
+      name: participant.name
+    }))
+
+    // Fetch matches
+    const matchesResponse = await fetch(
+      `${BASE_URL}/matches?tournamentId=${tournamentId}`, {
+      headers: {
+        'Content-Type': 'application/json', 
+        'Origin': 'http://localhost:5173'
+      }
+    })
+
+    if (!matchesResponse.ok) {
       throw new Error('Failed to fetch matches')
     }
 
-    const matchesData = await tournamentsResponse.json()
-    console.log(matchesData)
-    
-    // Transform the API response into our matches format
+    const matchesData = await matchesResponse.json()
     matches.value = matchesData.map(({ match }) => ({
       id: match.id,
-      player1_id: match.player1_id,
-      player2_id: match.player2_id,
+      player1: participants.value.find(p => p.id === match.player1_id),
+      player2: participants.value.find(p => p.id === match.player2_id),
       state: match.state,
       scores: match.scores_csv
     }))
 
     loading.value = false
   } catch (err) {
-    console.error('Error fetching matches:', err)
+    console.error('Error fetching data:', err)
     error.value = err.message
     loading.value = false
   }
@@ -78,7 +96,7 @@ onMounted(() => {
     <div v-else class="matches-grid">
       <div v-for="match in matches" :key="match.id" class="match-card">
         <div class="match-header">
-          <h3>{{ match.player1_id }} vs {{ match.player2_id }}</h3>
+          <h3>{{ match.player1.name }} vs {{ match.player2.name }}</h3>
           <span class="match-state">{{ match.state }}</span>
         </div>
         
