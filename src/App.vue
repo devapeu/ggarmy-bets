@@ -86,7 +86,7 @@ onMounted(() => {
 
 <template>
   <div class="container">
-    <h1>Tournament Match Betting</h1>
+    <h1>Liga 1 GGArmy - Bunkerbet</h1>
     
     <div v-if="loading" class="loading">
       Loading matches...
