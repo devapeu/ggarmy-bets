@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useChallongeStore } from './stores/useChallonge'
+import MatchItem from './components/MatchItem.vue'
 
 const challongeStore = useChallongeStore()
 
@@ -34,19 +35,13 @@ const handleVote = (matchId, player) => {
   }
 }
 
-function getPercentage(value, total) {
-  const sum = Object.values(total).reduce((acc, curr) => acc + curr, 0)
-  if (sum === 0) return 0
-  return Math.round((value / sum) * 100)
-}
-
 onMounted(() => {
   fetchMatches('qhwkxvmo')
 })
 </script>
 
 <template>
-  <div v-if="false" class="container">
+  <div class="container">
     <h1>Liga 1 GGArmy - Bunkerbet</h1>
     
     <div v-if="loading" class="loading">
@@ -58,64 +53,7 @@ onMounted(() => {
     </div>
     
     <div v-else class="matches-grid">
-      <div v-for="match in matches" :key="match.id" class="match-card">
-        Round {{ match.round }}
-        <div 
-          class="match-card__result"
-          :class="{ 'match-card__result--complete': match.state === 'complete' }">
-          {{ match.state === 'complete' ? 'Completo' : 'Abierto' }}
-        </div>
-        <div class="match-card__vote match-card__vote--player1">
-          <div class="match-card__player">
-            <div v-if="match.scores" class="match-card__score">
-              {{ match.scores.split('-')[0] }}
-            </div>
-            {{ match.player1.name }}
-          </div>
-          <div class="match-card__odds">
-            {{ getPercentage(match.odds.player1, match.odds) }}
-            ({{ match.odds.player1 }})
-          </div>
-          <button 
-            @click="handleVote(match.id, 'A')"
-            class="vote-button"
-            :disabled="match.state !== 'open'">
-            Gana {{ match.player1.name }}
-          </button>
-        </div>
-
-        <div class="match-card__vote match-card__vote--tie">
-          <div class="match-card__odds">
-            {{ getPercentage(match.odds.tie, match.odds) }}
-            ({{ match.odds.tie }})
-          </div>
-          <button 
-            @click="handleVote(match.id, 'tie')"
-            class="vote-button"
-            :disabled="match.state !== 'open'">
-            Empate
-          </button>
-        </div>
-        
-        <div class="match-card__vote match-card__vote--player2">
-          <div class="match-card__player">
-            <div v-if="match.scores" class="match-card__score">
-              {{ match.scores.split('-')[1] }}
-            </div>
-            {{ match.player2.name }}
-          </div>
-          <div class="match-card__odds">
-            {{ getPercentage(match.odds.player2, match.odds) }}
-            ({{ match.odds.player2 }})
-          </div>
-          <button 
-            @click="handleVote(match.id, 'B')"
-            class="vote-button"
-            :disabled="match.state !== 'open'">
-            Gana {{ match.player2.name }}
-          </button>
-        </div>
-      </div>
+      <MatchItem v-for="match in matches" :key="match.id" :match="match" />
     </div>
   </div>
 </template>
@@ -132,51 +70,6 @@ onMounted(() => {
   gap: 20px
   margin-top: 20px
 
-.match-card
-  border: 1px solid #ddd
-  border-radius: 8px
-  padding: 16px
-  background-color: #fff
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1)
-  display: grid
-  grid-template-columns: 1fr 1fr 1fr
-  gap: 12px
-  @media (max-width: 768px)
-    grid-template-columns: 1fr
-  &__result
-    grid-column: 1 / span 3
-    display: inline-block
-    padding: 4px 8px
-    border-radius: 4px
-    background-color: #f0f0f0
-    font-size: 0.8em
-  &__vote
-    display: flex
-    flex-direction: column
-    justify-content: flex-end
-    &--player1
-      align-items: flex-start
-    &--tie
-      align-items: center
-    &--player2
-      align-items: flex-end
-  &__score
-    padding: 4px 8px
-    border-radius: 4px
-    background-color: #f0f0f0
-    width: min-content
-
-.vote-button
-  padding: 8px 16px
-  background-color: #4CAF50
-  color: white
-  border: none
-  border-radius: 4px
-  cursor: pointer
-  transition: background-color 0.2s
-  &:hover
-    background-color: #45a049
-
 .loading
   text-align: center
   margin-top: 40px
@@ -186,11 +79,4 @@ onMounted(() => {
   color: #dc3545
   text-align: center
   margin-top: 40px
-
-.vote-button:disabled
-  background-color: #cccccc
-  cursor: not-allowed
-
-.vote-button:disabled:hover
-  background-color: #cccccc
 </style>
