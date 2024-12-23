@@ -62,7 +62,7 @@ switch ($uri) {
         $votes = getVotes($tournamentId);
 
         // Filter and transform matches
-        $filteredMatches = array_map(function($matchData) use ($participants) {
+        $filteredMatches = array_map(function($matchData) use ($participants, $votes) {
             $match = $matchData['match'];
             return [
                 'id' => $match['id'],
@@ -70,7 +70,7 @@ switch ($uri) {
                     fn($p) => in_array($match['player1_id'], $p['group_player_ids'])))[0] ?? null,
                 'player2' => array_values(array_filter($participants, 
                     fn($p) => in_array($match['player2_id'], $p['group_player_ids'])))[0] ?? null,
-                'votes' => array_filter($votes, fn($v) => $v['match_id'] === $match['id']),
+                'votes' => $votes ? array_filter($votes, fn($v) => $v['match_id'] === $match['id']) : [],
                 'state' => $match['state'],
                 'scores' => $match['scores_csv'],
                 'identifier' => $match['identifier'],

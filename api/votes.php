@@ -1,5 +1,7 @@
 <?php
 
+require_once 'db.php';
+
 function getVotes($tournamentId) {
   $sql = "SELECT * FROM votes WHERE tournament_id = :tournament_id";
   $stmt = queryDatabase($sql, ['tournament_id' => $tournamentId]);
