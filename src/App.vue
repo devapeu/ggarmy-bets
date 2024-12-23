@@ -1,8 +1,11 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useChallongeStore } from './stores/useChallonge'
 
-const matches = ref([])
-const participants = ref([])
+const challongeStore = useChallongeStore()
+
+const matches = computed(() => challongeStore.matches)
+const participants = computed(() => challongeStore.participants)
 const loading = ref(true)
 const error = ref(null)
 
@@ -12,63 +15,33 @@ const BASE_URL = `http://localhost:8000`
 // Fetch matches from Challonge API
 const fetchMatches = async (tournamentId) => {
   try {
-    // Fetch participants
-    const participantsResponse = await fetch(
-      `${BASE_URL}/participants?tournamentId=${tournamentId}`, {
-      headers: {
-        'Content-Type': 'application/json', 
-        'Origin': 'http://localhost:5173'
-      }
-    })
+    await challongeStore.fetchMatches(tournamentId)
 
-    if (!participantsResponse.ok) {
-      throw new Error('Failed to fetch participants')
-    }
-
-    const participantsData = await participantsResponse.json()
-    participants.value = participantsData.map(({ participant }) => ({
-      id: participant.group_player_ids[0],
-      name: participant.name
-    }))
-
-    // Fetch matches
-    const matchesResponse = await fetch(
-      `${BASE_URL}/matches?tournamentId=${tournamentId}`, {
-      headers: {
-        'Content-Type': 'application/json', 
-        'Origin': 'http://localhost:5173'
-      }
-    })
-
-    if (!matchesResponse.ok) {
-      throw new Error('Failed to fetch matches')
-    }
-
-    const matchesData = await matchesResponse.json()
-    matches.value = matchesData.map(({ match }) => ({
-      id: match.id,
-      player1: participants.value.find(p => p.id === match.player1_id),
-      player2: participants.value.find(p => p.id === match.player2_id),
-      odds: {
-        tie: 0,
-        player1: 0,
-        player2: 0
-      },
-      state: match.state,
-      scores: match.scores_csv,
-      identifier: match.identifier,
-      round: match.round,
-    })).sort((a, b) => {
-      if (a.state === 'complete' && b.state !== 'complete') return 1;
-      if (a.state !== 'complete' && b.state === 'complete') return -1;
-      if (a.state === b.state) {
-        if (a.identifier.length !== b.identifier.length) {
-          return a.identifier.length - b.identifier.length;
-        }
-        return a.identifier.localeCompare(b.identifier);
-      }
-      return 0;
-    });
+    // const matchesPayload = matches.value.map(m => ({
+    //   match_id: m.id,
+    //   tournament_id: tournamentId,
+    //   player1_id: m.player1.id,
+    //   player2_id: m.player2.id,
+    //   score: m.scores,
+    //   state: m.state,
+    //   round: m.round,
+    //   identifier: m.identifier,
+    // }));
+// 
+    // await fetch(`${BASE_URL}/add-matches`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'Origin': 'http://localhost:5173'
+    //   },
+    //   body: JSON.stringify(matchesPayload)
+    // }).then(async response => {
+    //   if (!response.ok) {
+    //     const text = await response.text();
+    //     throw new Error(text);
+    //   }
+    //   return response.json();
+    // });
 
     loading.value = false
   } catch (err) {
