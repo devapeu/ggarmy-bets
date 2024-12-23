@@ -5,12 +5,8 @@ import { useChallongeStore } from './stores/useChallonge'
 const challongeStore = useChallongeStore()
 
 const matches = computed(() => challongeStore.matches)
-const participants = computed(() => challongeStore.participants)
 const loading = ref(true)
 const error = ref(null)
-
-// Challonge API configuration - Move these to .env
-const BASE_URL = `http://localhost:8000`
 
 // Fetch matches from Challonge API
 const fetchMatches = async (tournamentId) => {
