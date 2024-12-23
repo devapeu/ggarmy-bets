@@ -16,33 +16,6 @@ const BASE_URL = `http://localhost:8000`
 const fetchMatches = async (tournamentId) => {
   try {
     await challongeStore.fetchMatches(tournamentId)
-
-    // const matchesPayload = matches.value.map(m => ({
-    //   match_id: m.id,
-    //   tournament_id: tournamentId,
-    //   player1_id: m.player1.id,
-    //   player2_id: m.player2.id,
-    //   score: m.scores,
-    //   state: m.state,
-    //   round: m.round,
-    //   identifier: m.identifier,
-    // }));
-// 
-    // await fetch(`${BASE_URL}/add-matches`, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Origin': 'http://localhost:5173'
-    //   },
-    //   body: JSON.stringify(matchesPayload)
-    // }).then(async response => {
-    //   if (!response.ok) {
-    //     const text = await response.text();
-    //     throw new Error(text);
-    //   }
-    //   return response.json();
-    // });
-
     loading.value = false
   } catch (err) {
     console.error('Error fetching data:', err)
