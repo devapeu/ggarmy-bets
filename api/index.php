@@ -6,6 +6,7 @@ header('Content-Type: application/json');
 
 // Load environment variables from .env file
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/votes.php';
 
 $challongeApiKey = $CHALLONGE_API_KEY;
 $tournamentId = $_GET['tournamentId'] ?? null;
@@ -50,8 +51,51 @@ function getCurl($url, $apiKey) {
 switch ($uri) {
     case '/matches':
         $apiURL = CHALLONGE_API_BASE . "/tournaments/{$tournamentId}/matches.json";
-        $response = getCurl($apiURL, $challongeApiKey);
-        sendResponse(json_decode($response, true));
+        $matchesResponse = json_decode(getCurl($apiURL, $challongeApiKey), true);
+        
+        // Get participants first since we need them for the matches
+        $participantsURL = CHALLONGE_API_BASE . "/tournaments/{$tournamentId}/participants.json";
+        $participantsResponse = json_decode(getCurl($participantsURL, $challongeApiKey), true);
+        $participants = array_column($participantsResponse, 'participant');
+
+        // Get votes
+        $votes = getVotes($tournamentId);
+
+        // Filter and transform matches
+        $filteredMatches = array_map(function($matchData) use ($participants) {
+            $match = $matchData['match'];
+            return [
+                'id' => $match['id'],
+                'player1' => array_values(array_filter($participants, 
+                    fn($p) => in_array($match['player1_id'], $p['group_player_ids'])))[0] ?? null,
+                'player2' => array_values(array_filter($participants, 
+                    fn($p) => in_array($match['player2_id'], $p['group_player_ids'])))[0] ?? null,
+                'votes' => array_filter($votes, fn($v) => $v['match_id'] === $match['id']),
+                'state' => $match['state'],
+                'scores' => $match['scores_csv'],
+                'identifier' => $match['identifier'],
+                'round' => $match['round']
+            ];
+        }, $matchesResponse);
+        
+        // Sort matches
+        usort($filteredMatches, function($a, $b) {
+            // Complete matches go last
+            if ($a['state'] === 'complete' && $b['state'] !== 'complete') return 1;
+            if ($a['state'] !== 'complete' && $b['state'] === 'complete') return -1;
+            
+            if ($a['state'] === $b['state']) {
+                // Sort by identifier length first
+                $lenDiff = strlen($a['identifier']) - strlen($b['identifier']);
+                if ($lenDiff !== 0) return $lenDiff;
+                
+                // Then sort alphabetically by identifier
+                return strcmp($a['identifier'], $b['identifier']);
+            }
+            return 0;
+        });
+        
+        sendResponse($filteredMatches);
         break;
         
     case '/participants':

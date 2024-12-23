@@ -77,7 +77,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="container">
+  <div v-if="false" class="container">
     <h1>Liga 1 GGArmy - Bunkerbet</h1>
     
     <div v-if="loading" class="loading">
