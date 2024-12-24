@@ -1,12 +1,13 @@
 <?php
-header('Access-Control-Allow-Origin: http://localhost:5173');
+  // Load environment variables from .env file
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/votes.php';
+
+header('Access-Control-Allow-Origin: ' . $FRONTEND_URL);
 header('Access-Control-Allow-Methods: GET');
 header('Access-Control-Allow-Headers: Content-Type');
 header('Content-Type: application/json');
 
-// Load environment variables from .env file
-require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/votes.php';
 
 $challongeApiKey = $CHALLONGE_API_KEY;
 $tournamentId = $_GET['tournamentId'] ?? null;
