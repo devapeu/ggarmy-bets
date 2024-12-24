@@ -38,11 +38,13 @@ const handleVote = (matchId, playerId) => {
   <div 
     class="match-card"
     :class="{ 'match-card--complete': match.state === 'complete' }">
-    Round {{ match.round }}
-    <div 
-      class="match-card__result"
-      :class="{ 'match-card__result--complete': match.state === 'complete' }">
-      {{ match.state === 'complete' ? 'Completo' : 'Abierto' }}
+    <div class="match-card__header">
+      Round {{ match.round }}
+      <div 
+        class="match-card__state"
+        :class="{ 'match-card__state--complete': match.state === 'complete' }">
+        {{ match.state === 'complete' ? 'Completo' : 'Abierto' }}
+      </div>
     </div>
     <div 
       class="match-card__vote match-card__vote--player1">
@@ -96,7 +98,9 @@ const handleVote = (matchId, playerId) => {
       </button>
     </div>
 
-    <div class="match-card__percentage-bar">
+    <div 
+      v-if="match.votes.length > 0"
+      class="match-card__percentage-bar">
       <div 
         v-if="groupedVotes.player1.length > 0"
         class="match-card__percentage-bar__item match-card__percentage-bar__item--player1"
@@ -133,15 +137,27 @@ const handleVote = (matchId, playerId) => {
   display: grid
   grid-template-columns: 1fr 1fr 1fr
   gap: 12px
+  @media (max-width: 480px)
+    padding: 12px
   &--complete
     background-color: #f1f5f9
-  &__result
+  &__header
     grid-column: 1 / span 3
-    display: inline-block
+    display: flex
+    justify-content: space-between
+    align-items: center
+    padding-bottom: 8px
+    border-bottom: 1px solid #cbd5e1
+    color: #64748b
+    font-size: 12px
+  &__state
     padding: 4px 8px
+    background-color: #f0fdf4
+    color: #15803d
     border-radius: 4px
-    background-color: #f0f0f0
-    font-size: 0.8em
+    &--complete
+      background-color: #e2e8f0
+      color: #64748b
   &__player-name
     font-size: 20px
     font-weight: bold
