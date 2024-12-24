@@ -112,8 +112,8 @@ switch ($uri) {
         $playerId = $_GET['playerId'] ?? null;
         $tournamentId = $_GET['tournamentId'] ?? null;
         $ip = $_GET['ip'] ?? null;
-        addVote($tournamentId, $matchId, $playerId, $ip);
-        sendResponse(['message' => 'Vote sent']);
+        $vote = addVote($tournamentId, $matchId, $playerId, $ip);
+        sendResponse($vote);
         break;
         
     default:

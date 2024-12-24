@@ -18,7 +18,7 @@ export const useChallongeStore = defineStore('challonge', () => {
   const sendVote = async (tournamentId, matchId, playerId, ip) => {
     await fetch(`${BASE_URL}/send-vote?tournamentId=${tournamentId}&matchId=${matchId}&playerId=${playerId}&ip=${ip}`)
       .then(response => response.json())
-      .then(data => console.log(data))
+      .then(data => updateMatchVote(matchId, data))
       .catch(error => {
         console.error('Error sending vote:', error)
       })
