@@ -57,6 +57,8 @@ onMounted(() => {
   max-width: 540px
   margin: 0 auto
   padding: 16px
+  @media (max-width: 540px)
+    padding: 12px
 
 .matches-grid
   display: grid

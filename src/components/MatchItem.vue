@@ -196,6 +196,7 @@ const handleVote = (matchId, playerId) => {
   @media (max-width: 540px)
     width: 100%
     padding: 8px 0
+    font-size: 12px
   &--player1
     color: #3b82f6
     border-color: #3b82f6
