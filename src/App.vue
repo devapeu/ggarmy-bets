@@ -35,9 +35,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="container">
-    <h1>Liga 1 GGArmy - Bunkerbet</h1>
-    
+  <header class="header">
+    <div class="container">
+      <h1>BunkerBet</h1>
+    </div>
+  </header>
+  <main class="container">
+    <div class="tournament-header">
+      <h2>Liga 1 GGArmy</h2>
+      <a href="https://challonge.com/qhwkxvmo" target="_blank">
+        Ver en Challonge
+      </a>
+    </div>
     <div v-if="loading" class="loading">
       Cargando partidas...
     </div>
@@ -49,16 +58,32 @@ onMounted(() => {
     <div v-else class="matches-grid">
       <MatchItem v-for="match in matches" :key="match.id" :match="match" @vote="handleVote" />
     </div>
-  </div>
+  </main>
 </template>
 
 <style lang="sass" scoped>
+
+.header
+  margin-bottom: 20px
+  background-color: #1e293b
+  color: #f8fafc
+  padding: 8px
+  h1
+    font-size: 16px
+    font-weight: 700
+
 .container
   max-width: 540px
   margin: 0 auto
-  padding: 16px
+  padding: 0 16px
   @media (max-width: 540px)
-    padding: 12px
+    padding: 0 12px
+
+.tournament-header
+  display: flex
+  justify-content: space-between
+  align-items: center
+  margin-bottom: 20px
 
 .matches-grid
   display: grid
