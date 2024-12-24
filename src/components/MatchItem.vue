@@ -20,6 +20,24 @@ const groupedVotes = computed(() => {
   }
 })
 
+const score = computed(() => {
+  const [player1Score, player2Score] = props.match.scores.split('-')
+  return {
+    player1: player1Score,
+    player2: player2Score,
+  }
+})
+
+const matchWinnerId = computed(() => {
+  if (score.value.player1 > score.value.player2) {
+    return props.match.player1.id
+  } else if (score.value.player2 > score.value.player1) {
+    return props.match.player2.id
+  } else {
+    return 0
+  }
+})
+
 const userIp = computed(() => ipStore.ip)
 
 function getPercentage(value, total) {
@@ -51,6 +69,8 @@ const handleVote = (matchId, playerId) => {
       <div class="match-card__player">
         <div class="match-card__player-name">
           {{ match.player1.name }}
+          <template v-if="matchWinnerId === match.player1.id">🏆</template>
+          <template v-else-if="matchWinnerId === 0">🤝</template>
         </div>
       </div>
 
@@ -68,9 +88,17 @@ const handleVote = (matchId, playerId) => {
       <div 
         v-if="match.scores"
         class="match-card__score-box">
-        <span class="match-card__score">{{ match.scores.split('-')[0] }}</span>
+        <span 
+          class="match-card__score match-card__score--player1"
+          :class="{ 'match-card__score--winner': matchWinnerId === props.match.player1.id }">
+          {{ score.player1 }}
+        </span>
         -
-        <span class="match-card__score">{{ match.scores.split('-')[1] }}</span>
+        <span 
+          class="match-card__score match-card__score--player2"
+          :class="{ 'match-card__score--winner': matchWinnerId === props.match.player2.id }">
+          {{ score.player2 }}
+        </span>
       </div>
 
       <button 
@@ -86,6 +114,8 @@ const handleVote = (matchId, playerId) => {
       class="match-card__vote match-card__vote--player2">
       <div class="match-card__player">
         <div class="match-card__player-name">
+          <template v-if="matchWinnerId === match.player2.id">🏆</template>
+          <template v-else-if="matchWinnerId === 0">🤝</template>
           {{ match.player2.name }}
         </div>
       </div>
@@ -141,6 +171,10 @@ const handleVote = (matchId, playerId) => {
     padding: 12px
   &--complete
     background-color: #f1f5f9
+    .match-card__percentage-bar
+      opacity: 0.5
+    .vote-button
+      display: none
   &__header
     grid-column: 1 / span 3
     display: flex
@@ -180,8 +214,14 @@ const handleVote = (matchId, playerId) => {
   &__score
     padding: 4px 8px
     border-radius: 4px
-    background-color: #f0f0f0
+    background-color: #cbd5e1
     width: min-content
+    &--winner
+      background-color: #f0f0f0
+      &.match-card__score--player1
+        background-color: #bfdbfe
+      &.match-card__score--player2
+        background-color: #fca5a5
   &__percentage-bar
     grid-column: 1 / span 3
     display: flex
