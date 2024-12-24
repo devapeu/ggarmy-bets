@@ -35,7 +35,9 @@ const handleVote = (matchId, playerId) => {
 </script>
 
 <template>
-  <div class="match-card">
+  <div 
+    class="match-card"
+    :class="{ 'match-card--complete': match.state === 'complete' }">
     Round {{ match.round }}
     <div 
       class="match-card__result"
@@ -131,6 +133,8 @@ const handleVote = (matchId, playerId) => {
   display: grid
   grid-template-columns: 1fr 1fr 1fr
   gap: 12px
+  &--complete
+    background-color: #f1f5f9
   &__result
     grid-column: 1 / span 3
     display: inline-block
@@ -188,29 +192,40 @@ const handleVote = (matchId, playerId) => {
   border-radius: 4px
   cursor: pointer
   transition: background-color 0.2s
-  border: 2px solid transparent
-  &:hover
-    filter: brightness(1.1)
+  border: 1px solid transparent
   &--player1
+    color: #3b82f6
     border-color: #3b82f6
+    background-color: #eff6ff
+    &:hover
+      background-color: #dbeafe
     &.vote-button--active
       background-color: #3b82f6
       color: #fff
   &--tie
     border-color: #334155
+    background-color: #f8fafc
+    &:hover
+      background-color: #e2e8f0
     &.vote-button--active
       background-color: #334155
       color: #fff
   &--player2
+    color: #ef4444
     border-color: #ef4444
+    background-color: #fef2f2
+    &:hover
+      background-color: #fee2e2
     &.vote-button--active
       background-color: #ef4444
       color: #fff
 
 .vote-button:disabled
-  background-color: #cccccc
+  color: #94a3b8
+  background-color: #e2e8f0
+  border-color: #e2e8f0!important
   cursor: not-allowed
 
 .vote-button:disabled:hover
-  background-color: #cccccc
+  background-color: #e2e8f0
 </style>
