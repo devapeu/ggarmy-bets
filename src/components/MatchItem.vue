@@ -13,9 +13,9 @@ const props = defineProps({
 
 const groupedVotes = computed(() => {
   return {
-    player1: props.match.votes.filter(vote => vote.voted_for_player_id === props.match.player1.id),
-    player2: props.match.votes.filter(vote => vote.voted_for_player_id === props.match.player2.id),
-    tie: props.match.votes.filter(vote => vote.voted_for_player_id === 0),
+    player1: props.match.votes.filter(vote => vote.voted_for_player_id == props.match.player1.id),
+    player2: props.match.votes.filter(vote => vote.voted_for_player_id == props.match.player2.id),
+    tie: props.match.votes.filter(vote => vote.voted_for_player_id == 0),
     total: props.match.votes.length,
   }
 })

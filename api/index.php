@@ -74,7 +74,7 @@ switch ($uri) {
                 'id' => $match['id'],
                 'player1' => getPlayer($participants, $match['player1_id']),
                 'player2' => getPlayer($participants, $match['player2_id']),
-                'votes' => $votes ? array_values(array_filter($votes, fn($v) => $v['match_id'] === $match['id'])) : [],
+                'votes' => $votes ? array_values(array_filter($votes, fn($v) => (string)$v['match_id'] === (string)$match['id'])) : [],
                 'state' => $match['state'],
                 'scores' => $match['scores_csv'],
                 'identifier' => $match['identifier'],
