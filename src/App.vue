@@ -1,9 +1,11 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useChallongeStore } from './stores/useChallonge'
+import { useIpStore } from './stores/useIp'
 import MatchItem from './components/MatchItem.vue'
 
 const challongeStore = useChallongeStore()
+const ipStore = useIpStore()
 
 const matches = computed(() => challongeStore.matches)
 const loading = ref(true)
@@ -22,21 +24,14 @@ const fetchMatches = async (tournamentId) => {
 }
 
 // Handle voting
-const handleVote = (matchId, player) => {
-  const match = matches.value.find(m => m.id === matchId)
-  if (match) {
-    if (player === 'A') {
-      match.odds.player1 = match.odds.player1 + 1
-    } else if (player === 'tie') {
-      match.odds.tie = match.odds.tie + 1
-    } else {
-      match.odds.player2 = match.odds.player2 + 1
-    }
-  }
+const handleVote = (matchId, playerId, ip) => {
+  console.log('handleVote', matchId, playerId, ip)
+  challongeStore.sendVote('qhwkxvmo', matchId, playerId, ip)
 }
 
 onMounted(() => {
-  fetchMatches('qhwkxvmo')
+  fetchMatches('qhwkxvmo');
+  ipStore.getUserIp();
 })
 </script>
 
@@ -53,7 +48,7 @@ onMounted(() => {
     </div>
     
     <div v-else class="matches-grid">
-      <MatchItem v-for="match in matches" :key="match.id" :match="match" />
+      <MatchItem v-for="match in matches" :key="match.id" :match="match" @vote="handleVote" />
     </div>
   </div>
 </template>

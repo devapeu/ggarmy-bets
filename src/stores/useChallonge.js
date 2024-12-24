@@ -15,5 +15,21 @@ export const useChallongeStore = defineStore('challonge', () => {
       })
   }
 
-  return { matches, fetchMatches }
+  const sendVote = async (tournamentId, matchId, playerId, ip) => {
+    await fetch(`${BASE_URL}/send-vote?tournamentId=${tournamentId}&matchId=${matchId}&playerId=${playerId}&ip=${ip}`)
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => {
+        console.error('Error sending vote:', error)
+      })
+  }
+
+  function updateMatchVote(matchId, vote) {
+    const match = matches.value.find(m => m.id === matchId)
+    if (match) {
+      match.votes.push(vote)
+    }
+  }
+
+  return { matches, fetchMatches, sendVote, updateMatchVote }
 })

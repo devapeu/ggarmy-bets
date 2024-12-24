@@ -1,5 +1,8 @@
 <script setup>
-import {ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useIpStore } from '../stores/useIp'
+
+const ipStore = useIpStore()
 
 const props = defineProps({
   match: {
@@ -17,6 +20,8 @@ const groupedVotes = computed(() => {
   }
 })
 
+const userIp = computed(() => ipStore.ip)
+
 function getPercentage(value, total) {
   if (total === 0) return 0
   return Math.round((value / total) * 100)
@@ -24,8 +29,8 @@ function getPercentage(value, total) {
 
 const emit = defineEmits(['vote'])
 
-const handleVote = (matchId, vote) => {
-  emit('vote', matchId, vote)
+const handleVote = (matchId, playerId) => {
+  emit('vote', matchId, playerId, userIp.value)
 }
 </script>
 
@@ -49,7 +54,7 @@ const handleVote = (matchId, vote) => {
         ({{ groupedVotes.player1.length }})
       </div>
       <button 
-        @click="handleVote(match.id, 'A')"
+        @click="handleVote(match.id, match.player1.id)"
         class="vote-button"
         :disabled="match.state !== 'open'">
         Gana {{ match.player1.name }}
@@ -62,7 +67,7 @@ const handleVote = (matchId, vote) => {
         ({{ groupedVotes.tie.length }})
       </div>
       <button 
-        @click="handleVote(match.id, 'tie')"
+        @click="handleVote(match.id, 0)"
         class="vote-button"
         :disabled="match.state !== 'open'">
         Empate
@@ -81,7 +86,7 @@ const handleVote = (matchId, vote) => {
         ({{ groupedVotes.player2.length }})
       </div>
       <button 
-        @click="handleVote(match.id, 'B')"
+        @click="handleVote(match.id, match.player2.id)"
         class="vote-button"
         :disabled="match.state !== 'open'">
         Gana {{ match.player2.name }}

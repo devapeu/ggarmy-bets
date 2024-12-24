@@ -9,7 +9,7 @@ function getVotes($tournamentId) {
   return $votes; 
 }
 
-function addVote($matchId, $playerId, $ip) {
-  $sql = "INSERT INTO votes (match_id, player_id, ip) VALUES (:match_id, :player_id, :ip)";
-  $stmt = queryDatabase($sql, ['match_id' => $matchId, 'player_id' => $playerId, 'ip' => $ip]);
+function addVote($tournamentId, $matchId, $playerId, $ip) {
+  $sql = "INSERT INTO votes (match_id, voted_for_player_id, tournament_id, ip) VALUES (:match_id, :voted_for_player_id, :tournament_id, :ip)";
+  $stmt = queryDatabase($sql, ['match_id' => $matchId, 'voted_for_player_id' => $playerId, 'tournament_id' => $tournamentId, 'ip' => $ip]);
 }

@@ -73,7 +73,7 @@ switch ($uri) {
                 'id' => $match['id'],
                 'player1' => getPlayer($participants, $match['player1_id']),
                 'player2' => getPlayer($participants, $match['player2_id']),
-                'votes' => $votes ? array_filter($votes, fn($v) => $v['match_id'] === $match['id']) : [],
+                'votes' => $votes ? array_values(array_filter($votes, fn($v) => $v['match_id'] === $match['id'])) : [],
                 'state' => $match['state'],
                 'scores' => $match['scores_csv'],
                 'identifier' => $match['identifier'],
@@ -105,6 +105,15 @@ switch ($uri) {
         $apiURL = CHALLONGE_API_BASE . "/tournaments/{$tournamentId}/participants.json";
         $response = getCurl($apiURL, $challongeApiKey);
         sendResponse(json_decode($response, true));
+        break;
+
+    case '/send-vote':
+        $matchId = $_GET['matchId'] ?? null;
+        $playerId = $_GET['playerId'] ?? null;
+        $tournamentId = $_GET['tournamentId'] ?? null;
+        $ip = $_GET['ip'] ?? null;
+        addVote($tournamentId, $matchId, $playerId, $ip);
+        sendResponse(['message' => 'Vote sent']);
         break;
         
     default:
