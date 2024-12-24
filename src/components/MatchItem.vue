@@ -152,10 +152,6 @@ const handleVote = (matchId, playerId) => {
       align-items: center
     &--player2
       align-items: flex-end
-    &--user-vote
-      background-color: #f0f0f0
-      border: 1px solid #4CAF50
-      border-radius: 4px
   &__score-box
     display: flex
     align-items: center
