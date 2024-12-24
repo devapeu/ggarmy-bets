@@ -42,7 +42,9 @@ const handleVote = (matchId, playerId) => {
       :class="{ 'match-card__result--complete': match.state === 'complete' }">
       {{ match.state === 'complete' ? 'Completo' : 'Abierto' }}
     </div>
-    <div class="match-card__vote match-card__vote--player1">
+    <div 
+      class="match-card__vote match-card__vote--player1"
+      :class="{ 'match-card__vote--user-vote': userIp && groupedVotes.player1.some(vote => vote.ip === userIp) }">
       <div class="match-card__player">
         <div v-if="match.scores" class="match-card__score">
           {{ match.scores.split('-')[0] }}
@@ -61,7 +63,9 @@ const handleVote = (matchId, playerId) => {
       </button>
     </div>
 
-    <div class="match-card__vote match-card__vote--tie">
+    <div 
+      class="match-card__vote match-card__vote--tie"
+      :class="{ 'match-card__vote--user-vote': userIp && groupedVotes.tie.some(vote => vote.ip === userIp) }">
       <div class="match-card__odds">
         {{ getPercentage(groupedVotes.tie.length, groupedVotes.total) }}
         ({{ groupedVotes.tie.length }})
@@ -74,7 +78,9 @@ const handleVote = (matchId, playerId) => {
       </button>
     </div>
     
-    <div class="match-card__vote match-card__vote--player2">
+    <div
+      class="match-card__vote match-card__vote--player2"
+      :class="{ 'match-card__vote--user-vote': userIp && groupedVotes.player2.some(vote => vote.ip === userIp) }">
       <div class="match-card__player">
         <div v-if="match.scores" class="match-card__score">
           {{ match.scores.split('-')[1] }}
@@ -123,6 +129,10 @@ const handleVote = (matchId, playerId) => {
       align-items: center
     &--player2
       align-items: flex-end
+    &--user-vote
+      background-color: #f0f0f0
+      border: 1px solid #4CAF50
+      border-radius: 4px
   &__score
     padding: 4px 8px
     border-radius: 4px
