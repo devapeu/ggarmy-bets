@@ -29,6 +29,7 @@ const score = computed(() => {
 })
 
 const matchWinnerId = computed(() => {
+  if (props.match.state === 'open') return null
   if (score.value.player1 > score.value.player2) {
     return props.match.player1.id
   } else if (score.value.player2 > score.value.player1) {
