@@ -106,8 +106,6 @@ const handleVote = (matchId, playerId) => {
   display: grid
   grid-template-columns: 1fr 1fr 1fr
   gap: 12px
-  @media (max-width: 768px)
-    grid-template-columns: 1fr
   &__result
     grid-column: 1 / span 3
     display: inline-block
