@@ -193,6 +193,9 @@ const handleVote = (matchId, playerId) => {
   cursor: pointer
   transition: background-color 0.2s
   border: 1px solid transparent
+  @media (max-width: 540px)
+    width: 100%
+    padding: 8px 0
   &--player1
     color: #3b82f6
     border-color: #3b82f6

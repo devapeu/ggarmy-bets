@@ -54,9 +54,9 @@ onMounted(() => {
 
 <style lang="sass" scoped>
 .container
-  max-width: 1200px
+  max-width: 540px
   margin: 0 auto
-  padding: 20px
+  padding: 16px
 
 .matches-grid
   display: grid
