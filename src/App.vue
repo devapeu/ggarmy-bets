@@ -25,7 +25,6 @@ const fetchMatches = async (tournamentId) => {
 
 // Handle voting
 const handleVote = (matchId, playerId, ip) => {
-  console.log('handleVote', matchId, playerId, ip)
   challongeStore.sendVote('qhwkxvmo', matchId, playerId, ip)
 }
 
