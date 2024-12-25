@@ -1,8 +1,10 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useIpStore } from '../stores/useIp'
 
 const ipStore = useIpStore()
+
+const bet = ref(0);
 
 const props = defineProps({
   match: {
@@ -18,6 +20,19 @@ const groupedVotes = computed(() => {
     tie: props.match.votes.filter(vote => vote.voted_for_player_id == 0),
     total: props.match.votes.length,
   }
+})
+
+const userVote = computed(() => {
+  return props.match.votes.find(vote => vote.ip === userIp.value)
+})
+
+const payout = computed(() => {
+  const sameVotesAsUser = props.match.votes.filter(vote => vote.voted_for_player_id == userVote.value.voted_for_player_id).length;
+  const totalVotes = props.match.votes.length
+  const probability = sameVotesAsUser / totalVotes
+  if (probability === 0) return 0
+  const odds = 1 / probability;
+  return bet.value * odds;
 })
 
 const score = computed(() => {
@@ -154,6 +169,18 @@ const handleVote = (matchId, playerId) => {
         ({{ groupedVotes.player2.length }})
       </div>
     </div>
+
+    <div 
+      v-if="userVote"
+      class="match-card__user-bet">
+      <label for="bet">
+        Apuesta: 
+        <input v-model="bet" id="bet" type="number" min="0"/>
+      </label>
+      <span>
+        Pago: {{ payout }}
+      </span>
+    </div>
   </div>
 </template>
 
@@ -176,6 +203,12 @@ const handleVote = (matchId, playerId) => {
       opacity: 0.5
     .vote-button
       display: none
+  &__user-bet
+    grid-column: 1 / span 3
+    display: flex
+    justify-content: space-between
+    input
+      max-width: 48px 
   &__header
     grid-column: 1 / span 3
     display: flex
