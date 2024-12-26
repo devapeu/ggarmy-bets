@@ -98,7 +98,7 @@ const handleVote = (matchId, playerId) => {
         @click="handleVote(match.id, match.player1.id)"
         class="vote-button vote-button--player1"
         :class="{ 'vote-button--active': userIp && groupedVotes.player1.some(vote => vote.ip === userIp) }"
-        :disabled="match.state !== 'open'">
+        :disabled="isLoading">
         Gana {{ match.player1.name }}
       </button>
     </div>
@@ -143,7 +143,7 @@ const handleVote = (matchId, playerId) => {
         @click="handleVote(match.id, match.player2.id)"
         class="vote-button vote-button--player2"
         :class="{ 'vote-button--active': userIp && groupedVotes.player2.some(vote => vote.ip === userIp) }"
-        :disabled="match.state !== 'open'">
+        :disabled="isLoading">
         Gana {{ match.player2.name }}
       </button>
     </div>
