@@ -171,7 +171,7 @@ const handleVote = (matchId, playerId) => {
     </div>
 
     <div 
-      v-if="userVote && match.state !== 'complete'"
+      v-if="false"
       class="match-card__user-bet">
       <label for="bet">
         Apuesta: 
