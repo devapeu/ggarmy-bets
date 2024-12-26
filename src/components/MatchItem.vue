@@ -171,7 +171,7 @@ const handleVote = (matchId, playerId) => {
     </div>
 
     <div 
-      v-if="userVote"
+      v-if="userVote && match.state !== 'complete'"
       class="match-card__user-bet">
       <label for="bet">
         Apuesta: 
@@ -264,7 +264,10 @@ const handleVote = (matchId, playerId) => {
     &__item
       text-align: center
       font-weight: bold
-      padding: 4px 8px
+      padding: 4px 0
+      overflow: hidden
+      white-space: nowrap
+      text-overflow: ellipsis
       &--player1
         background-color: #3b82f6
         color: #fff
