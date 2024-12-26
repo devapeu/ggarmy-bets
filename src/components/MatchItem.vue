@@ -1,8 +1,10 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useIpStore } from '../stores/useIp'
+import { useLoadingStore } from '../stores/useLoading'
 
 const ipStore = useIpStore()
+const loadingStore = useLoadingStore()
 
 const bet = ref(0);
 
@@ -12,6 +14,8 @@ const props = defineProps({
     required: true
   }
 })
+
+const isLoading = computed(() => loadingStore.isLoading)
 
 const groupedVotes = computed(() => {
   return {
@@ -121,7 +125,7 @@ const handleVote = (matchId, playerId) => {
         @click="handleVote(match.id, 0)"
         class="vote-button vote-button--tie"
         :class="{ 'vote-button--active': userIp && groupedVotes.tie.some(vote => vote.ip === userIp) }"
-        :disabled="match.state !== 'open'">
+        :disabled="isLoading">
         Empate
       </button>
     </div>

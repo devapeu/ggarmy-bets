@@ -2,24 +2,26 @@
 import { ref, onMounted, computed } from 'vue'
 import { useChallongeStore } from './stores/useChallonge'
 import { useIpStore } from './stores/useIp'
+import { useLoadingStore } from './stores/useLoading'
 import MatchItem from './components/MatchItem.vue'
 
 const challongeStore = useChallongeStore()
 const ipStore = useIpStore()
+const loadingStore = useLoadingStore()
 
+const isLoading = computed(() => loadingStore.isLoading)
 const matches = computed(() => challongeStore.matches)
-const loading = ref(true)
 const error = ref(null)
 
 // Fetch matches from Challonge API
 const fetchMatches = async (tournamentId) => {
   try {
     await challongeStore.fetchMatches(tournamentId)
-    loading.value = false
+    loadingStore.setIsLoading(false)
   } catch (err) {
     console.error('Error fetching data:', err)
     error.value = err.message
-    loading.value = false
+    loadingStore.setIsLoading(false)
   }
 }
 
@@ -47,7 +49,7 @@ onMounted(() => {
         Ver en Challonge
       </a>
     </div>
-    <div v-if="loading" class="loading">
+    <div v-if="isLoading && !matches.length" class="loading">
       Cargando partidas...
     </div>
 

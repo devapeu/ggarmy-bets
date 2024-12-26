@@ -1,10 +1,12 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import { useLoadingStore } from './useLoading'
 
 const BASE_URL = import.meta.env.VITE_API_URL
 
 export const useChallongeStore = defineStore('challonge', () => {
   const matches = ref([])
+  const loadingStore = useLoadingStore();
 
   const fetchMatches = async (tournamentId) => {
     await fetch(`${BASE_URL}/matches?tournamentId=${tournamentId}`)
@@ -16,6 +18,7 @@ export const useChallongeStore = defineStore('challonge', () => {
   }
 
   const sendVote = async (tournamentId, matchId, playerId, ip) => {
+    loadingStore.setIsLoading(true);
     await fetch(`${BASE_URL}/send-vote?tournamentId=${tournamentId}&matchId=${matchId}&playerId=${playerId}&ip=${ip}`)
       .then(response => response.json())
       .then(data => updateMatchVote(matchId, data))
@@ -33,6 +36,7 @@ export const useChallongeStore = defineStore('challonge', () => {
       } else {
         match.votes.push(vote)
       }
+      loadingStore.setIsLoading(false);
     }
   }
 
