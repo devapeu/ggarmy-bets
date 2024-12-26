@@ -268,6 +268,8 @@ const handleVote = (matchId, playerId) => {
       overflow: hidden
       white-space: nowrap
       text-overflow: ellipsis
+      width: 0%
+      transition: 200ms ease all
       &--player1
         background-color: #3b82f6
         color: #fff
